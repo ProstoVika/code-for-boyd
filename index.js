@@ -5,6 +5,7 @@
     let animId = null;
 
 
+
     let mouse = { x: null, y: null, radius: 30 };
     canvas.addEventListener("mousemove", (e) => {
         const rect = canvas.getBoundingClientRect();
@@ -58,7 +59,8 @@
         const drawW = Math.max(120, Math.floor(image.width * scale));
         const drawH = Math.max(120, Math.floor(image.height * scale));
         const startX = Math.floor((canvas.clientWidth - drawW) / 2);
-        const startY = Math.floor((canvas.clientHeight - drawH) / 2);
+        const offsetY = -200;
+        const startY = Math.floor((canvas.clientHeight - drawH) / 2) + offsetY;
 
         const off = document.createElement("canvas");
         off.width = drawW;
