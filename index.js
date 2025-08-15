@@ -4,8 +4,6 @@
     let particles = [];
     let animId = null;
 
-
-
     let mouse = { x: null, y: null, radius: 30 };
     canvas.addEventListener("mousemove", (e) => {
         const rect = canvas.getBoundingClientRect();
@@ -54,12 +52,17 @@
     function buildParticlesFromImage(image) {
         particles = [];
 
-        const maxW = Math.min(Math.floor(window.innerWidth * 0.5), 600);
+        // Адаптивний масштаб
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const maxW = Math.min(Math.floor(screenWidth * 0.6), 600);
         const scale = maxW / image.width;
         const drawW = Math.max(120, Math.floor(image.width * scale));
         const drawH = Math.max(120, Math.floor(image.height * scale));
+
+        // Центрування з адаптивним вертикальним offset
         const startX = Math.floor((canvas.clientWidth - drawW) / 2);
-        const offsetY = -200;
+        const offsetY = screenHeight < 600 ? -100 : -200;
         const startY = Math.floor((canvas.clientHeight - drawH) / 2) + offsetY;
 
         const off = document.createElement("canvas");
@@ -77,7 +80,7 @@
         }
 
         const data = imgData.data;
-        const step = 3;
+        const step = screenWidth < 600 ? 4 : 3; // менше частинок на маленьких екранах
         for (let y = 0; y < drawH; y += step) {
             for (let x = 0; x < drawW; x += step) {
                 const idx = (y * drawW + x) * 4;
@@ -91,7 +94,7 @@
                         y: Math.random() * canvas.clientHeight,
                         targetX: startX + x,
                         targetY: startY + y,
-                        size: 1.4,
+                        size: screenWidth < 600 ? 2 : 1.4,
                         color: `rgb(${r},${g},${b})`,
                         ease: 0.06 + Math.random() * 0.03
                     });
@@ -111,14 +114,12 @@
         for (let i = 0; i < particles.length; i++) {
             const p = particles[i];
 
-
             if (mouse.x !== null && mouse.y !== null) {
                 const dx = p.x - mouse.x;
                 const dy = p.y - mouse.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < mouse.radius) {
-                    // відштовхуємо
                     const angle = Math.atan2(dy, dx);
                     const force = (mouse.radius - dist) / mouse.radius;
                     const moveX = Math.cos(angle) * force * 8;
